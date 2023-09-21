@@ -46,7 +46,7 @@ app.get('/api/:id', (req,res) => {
   
   const {id} = req.params
   const  idTimeStamp = new Date(id)
-  const date = new Date(id);
+  const date = new Date();
   const dateFormatee = formatDateToCustomString(date);
 
     res.json(
