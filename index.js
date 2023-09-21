@@ -48,7 +48,12 @@ app.get('/api/:id', (req,res) => {
   const  idTimeStamp = new Date(id)
   const date = new Date();
   const dateFormatee = formatDateToCustomString(date);
-
+    if(id = "")
+    {
+      res.json({
+        utc: dateFormatee
+      })
+    }
     res.json(
       {
         "unix": idTimeStamp.getTime(),
