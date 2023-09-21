@@ -19,11 +19,43 @@ app.get("/", function (req, res) {
 });
 
 
+
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
+app.get("/api", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+
+
+app.get('/api/:id', (req,res) => {
+  function formatDateToCustomString(date) {
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  
+    const dayOfWeek = daysOfWeek[date.getUTCDay()];
+    const dayOfMonth = date.getUTCDate();
+    const month = months[date.getUTCMonth()];
+    const year = date.getUTCFullYear();
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+  
+    return `${dayOfWeek}, ${dayOfMonth} ${month} ${year} ${hours}:${minutes}:${seconds} GMT`;
+  }
+  
+  
+  const {id} = req.params
+  const  idTimeStamp = new Date(id)
+  const date = new Date(id);
+  const dateFormatee = formatDateToCustomString(date);
+
+    res.json(
+      {
+        "unix": idTimeStamp.getTime(),
+        "utc": dateFormatee
+      }
+    )
+})
 
 
 // listen for requests :)
