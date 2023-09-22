@@ -8,7 +8,7 @@ var app = express();
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
-app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
+app.use(cors({ optionsSuccessStatus: 200 }));  // some legacy browsers choke on 204
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -18,22 +18,18 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-
-
 // your first API endpoint... 
 app.get("/api", function (req, res) {
-  res.json({greeting: 'hello API'});
+  res.json({ greeting: 'hello API' });
 });
 
-
-
-app.get('/api/:id', (req,res) => {
+app.get('/api/:date?', (req, res) => {
   function formatDateToCustomString(date) {
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   
     const dayOfWeek = daysOfWeek[date.getUTCDay()];
-    const dayOfMonth = date.getUTCDate();
+    const dayOfMonth = date.getUTCDate().toString().padStart(2, '0');
     const month = months[date.getUTCMonth()];
     const year = date.getUTCFullYear();
     const hours = date.getUTCHours().toString().padStart(2, '0');
@@ -42,26 +38,29 @@ app.get('/api/:id', (req,res) => {
   
     return `${dayOfWeek}, ${dayOfMonth} ${month} ${year} ${hours}:${minutes}:${seconds} GMT`;
   }
-  
-  
-  const {id} = req.params
-  const  idTimeStamp = new Date(id)
-  const date = new Date();
-  const dateFormatee = formatDateToCustomString(date);
-    if(id == null)
-    {
-      res.json({
-        utc: dateFormatee
-      })
-    }
-    res.json(
-      {
-        "unix": idTimeStamp.getTime(),
-        "utc": dateFormatee
-      }
-    )
-})
 
+  const { date } = req.params;
+
+  if (!date) {
+    // Si le paramètre de date est vide, renvoyer l'heure actuelle
+    const currentDate = new Date();
+    res.json({
+      unix: currentDate.getTime(),
+      utc: formatDateToCustomString(currentDate)
+    });
+  } else {
+    const dateInput = new Date(date);
+
+    if (dateInput.toString() === "Invalid Date") {
+      res.json({ error: "Invalid Date" });
+    } else {
+      res.json({
+        unix: dateInput.getTime(),
+        utc: formatDateToCustomString(dateInput)
+      });
+    }
+  }
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
